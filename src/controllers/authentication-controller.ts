@@ -95,7 +95,7 @@ export const loginUserController = async (
   }
 };
 
-export const refreshAccessTokenHandler = async (
+export const refreshAccessTokenController = async (
   req: Request,
   res: Response,
   next: NextFunction
