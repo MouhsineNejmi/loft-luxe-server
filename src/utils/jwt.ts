@@ -1,33 +1,19 @@
+require('dotenv').config();
 import jwt, { SignOptions } from 'jsonwebtoken';
-import config from 'config';
 
 export const signJwt = (
   payload: Object,
-  key: 'accessTokenPrivateKey' | 'refreshTokenPrivateKey',
+  key: string,
   options: SignOptions = {}
 ) => {
-  const privateKey = Buffer.from(config.get<string>(key), 'base64').toString(
-    'ascii'
-  );
-
-  return jwt.sign(payload, privateKey, {
-    ...(options && options),
-    algorithm: 'RS256',
-  });
+  return jwt.sign(payload, key);
 };
 
-export const verifyJwt = <T>(
-  token: string,
-  key: 'accessTokenPublicKey' | 'refreshTokenPublicKey'
-): T | null => {
+export const verifyJwt = <T>(token: string, key: string): T | null => {
   try {
-    const publicKey = Buffer.from(config.get<string>(key), 'base64').toString(
-      'ascii'
-    );
-
-    return jwt.verify(token, publicKey) as T;
+    return jwt.verify(token, key) as T;
   } catch (error) {
-    console.log(error);
+    console.log('Utils jwt catch error: ', error);
     return null;
   }
 };

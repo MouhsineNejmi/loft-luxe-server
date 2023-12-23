@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
 import { findUserById } from '../services/user-service';
-import AppError from '../utils/appError';
 import { verifyJwt } from '../utils/jwt';
 
 export const deserializeUser = async (
@@ -20,22 +19,31 @@ export const deserializeUser = async (
     }
 
     if (!access_token) {
-      return next(new AppError('You are not logged in', 401));
+      return res.status(403).json({
+        status: 'fail',
+        message: 'You are not logged in',
+      });
     }
 
     const decoded = verifyJwt<{ sub: string }>(
       access_token,
-      'accessTokenPublicKey'
+      `${process.env.ACCESS_TOKEN_KEY}`
     );
 
     if (!decoded) {
-      return next(new AppError(`Invalid token or user doesn't exist`, 401));
+      return res.status(401).json({
+        status: 'fail',
+        message: "Invalid token or user doesn't exist",
+      });
     }
 
     const user = await findUserById(decoded.sub);
 
     if (!user) {
-      return next(new AppError(`User with that token no longer exist`, 401));
+      return res.status(401).json({
+        status: 'fail',
+        message: 'User with that token no longer exist',
+      });
     }
 
     res.locals.user = user;

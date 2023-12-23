@@ -13,7 +13,6 @@ export const validate =
       next();
     } catch (err: any) {
       if (err instanceof ValidationError) {
-        console.log('yup error: ', err);
         return res.status(400).json({
           status: 'fail',
           error: err.errors,

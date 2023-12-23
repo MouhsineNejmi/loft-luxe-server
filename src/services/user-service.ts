@@ -1,5 +1,4 @@
 import { genSalt, hash } from 'bcrypt';
-import config from 'config';
 import { User } from '@prisma/client';
 
 import { signJwt } from '../utils/jwt';
@@ -67,13 +66,21 @@ export const signToken = async (user: User | null) => {
     return { access_token: null, refresh_token: null };
   }
 
-  const access_token = signJwt({ sub: user.id }, 'accessTokenPrivateKey', {
-    expiresIn: `${config.get<number>('accessTokenExpiresIn')}h`,
-  });
+  const access_token = signJwt(
+    { sub: user.id },
+    `${process.env.ACCESS_TOKEN_KEY}`,
+    {
+      expiresIn: `${process.env.ACCESS_TOKEN_EXPIRES_IN}h`,
+    }
+  );
 
-  const refresh_token = signJwt({ sub: user.id }, 'refreshTokenPrivateKey', {
-    expiresIn: `${config.get<number>('refreshTokenExpiresIn')}h`,
-  });
+  const refresh_token = signJwt(
+    { sub: user.id },
+    `${process.env.REFRESH_TOKEN_KEY}`,
+    {
+      expiresIn: `${process.env.REFRESH_TOKEN_EXPIRES_IN}h`,
+    }
+  );
 
   return { access_token, refresh_token };
 };
