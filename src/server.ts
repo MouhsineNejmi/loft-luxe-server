@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
-import v1Routes from './routes/v1-routes';
+import v1Route from './routes/v1-route';
 
 dotenv.config();
 
@@ -13,7 +13,7 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ origin: process.env.ORIGIN, credentials: true }));
 
-app.use('/v1', v1Routes);
+app.use('/v1', v1Route);
 
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   err.status = err.status || 'error';

@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import { findUserById } from '../services/user-service';
+import { findUserById } from '../services/users-service';
 import { verifyJwt } from '../utils/jwt';
 
 export const deserializeUser = async (

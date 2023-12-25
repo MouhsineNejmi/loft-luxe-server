@@ -8,7 +8,7 @@ import {
   findUser,
   findUserById,
   signToken,
-} from '../services/user-service';
+} from '../services/users-service';
 import { signJwt, verifyJwt } from '../utils/jwt';
 
 export const registerUserController = async (
