@@ -84,3 +84,41 @@ export const signToken = async (user: User | null) => {
 
   return { access_token, refresh_token };
 };
+
+export const addListingToFavorites = async (
+  currentUser: User,
+  listingId: string
+) => {
+  let favoriteIds = [...(currentUser.favoriteIds || [])];
+  favoriteIds.push(listingId);
+
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: currentUser.id,
+    },
+    data: {
+      favoriteIds,
+    },
+  });
+
+  return updatedUser;
+};
+
+export const removeListingFromFavorites = async (
+  currentUser: User,
+  listingId: string
+) => {
+  const favoriteIds = [...(currentUser.favoriteIds || [])];
+  const newFavoritesIds = favoriteIds.filter((id) => id !== listingId);
+
+  const updatedUser = await prisma.user.update({
+    where: {
+      id: currentUser.id,
+    },
+    data: {
+      favoriteIds: newFavoritesIds,
+    },
+  });
+
+  return updatedUser;
+};
