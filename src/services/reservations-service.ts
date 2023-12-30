@@ -1,4 +1,4 @@
-import { Reservation } from '@prisma/client';
+import { Reservation, User } from '@prisma/client';
 import prisma from '../lib/prisma';
 
 export const addReservationService = async (values: Reservation) => {
@@ -21,17 +21,7 @@ export const addReservationService = async (values: Reservation) => {
   return reservation;
 };
 
-type GetReservationsParams = {
-  listingId?: string;
-  userId?: string;
-  authordId?: string;
-};
-
-export const getReservations = async ({
-  listingId,
-  userId,
-  authordId,
-}: GetReservationsParams) => {
+export const getReservations = async ({ listingId, userId, authorId }: any) => {
   let query: any = {};
 
   if (listingId) {
@@ -42,9 +32,9 @@ export const getReservations = async ({
     query.userId = userId;
   }
 
-  if (authordId) {
+  if (authorId) {
     query.listing = {
-      listingId: authordId,
+      listingId: authorId,
     };
   }
 
@@ -59,4 +49,18 @@ export const getReservations = async ({
   });
 
   return reservations;
+};
+
+export const deleteReservation = async (
+  reservationId: string,
+  currentUser: User
+) => {
+  const reservation = await prisma.reservation.deleteMany({
+    where: {
+      id: reservationId,
+      OR: [{ userId: currentUser.id }, { listing: { userId: currentUser.id } }],
+    },
+  });
+
+  return reservation;
 };

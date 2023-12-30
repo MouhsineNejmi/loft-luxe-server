@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   addReservation,
+  cancelReservation,
   getReservationsByQuery,
 } from '../controllers/reservations-controller';
 
@@ -17,5 +18,7 @@ router.use(deserializeUser, requireUser);
 router.get('/', getReservationsByQuery);
 
 router.post('/', validate(addReservationSchema), addReservation);
+
+router.delete('/:reservationId', cancelReservation);
 
 export default router;
