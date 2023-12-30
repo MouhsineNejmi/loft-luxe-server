@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import {
   addListingService,
   listAllListings,
+  listingById,
 } from '../services/listings-service';
 
 export const addListing = async (
@@ -35,4 +36,22 @@ export const getAllListings = async (
     status: 'success',
     listings,
   });
+};
+
+export const getListingById = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  const { listingId } = req.params;
+  try {
+    const listing = await listingById(listingId);
+
+    return res.status(200).json({
+      status: 'success',
+      listing,
+    });
+  } catch (error) {
+    next(error);
+  }
 };

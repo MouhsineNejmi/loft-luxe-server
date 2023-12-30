@@ -1,22 +1,21 @@
 import { Router } from 'express';
 import {
-  addListing,
-  getAllListings,
-  getListingById,
-} from '../controllers/listings-controller';
+  addReservation,
+  getReservationsByQuery,
+} from '../controllers/reservations-controller';
 
 import { deserializeUser } from '../middlewares/deserialize-user-middleware';
 import { requireUser } from '../middlewares/require-user-middleware';
 import { validate } from '../middlewares/validate-middleware';
 
-import { addListingSchema } from '../schemas/listing-schema';
+import { addReservationSchema } from '../schemas/reservation-schema';
 
 const router = Router();
 
-router.get('/', getAllListings);
-router.get('/:listingId', getListingById);
-
 router.use(deserializeUser, requireUser);
-router.post('/', validate(addListingSchema), addListing);
+
+router.get('/', getReservationsByQuery);
+
+router.post('/', validate(addReservationSchema), addReservation);
 
 export default router;

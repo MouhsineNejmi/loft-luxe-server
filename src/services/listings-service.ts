@@ -18,3 +18,18 @@ export const listAllListings = async () => {
 
   return listings;
 };
+
+export const listingById = async (listingId: string) => {
+  const listing = await prisma.listing.findUnique({
+    where: {
+      id: listingId,
+    },
+    include: {
+      user: true,
+    },
+  });
+
+  if (!listing) return null;
+
+  return listing;
+};
