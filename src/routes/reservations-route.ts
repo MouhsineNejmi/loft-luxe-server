@@ -1,8 +1,8 @@
 import { Router } from 'express';
 import {
   addReservation,
-  cancelReservation,
   getReservationsByQuery,
+  cancelReservation,
 } from '../controllers/reservations-controller';
 
 import { deserializeUser } from '../middlewares/deserialize-user-middleware';

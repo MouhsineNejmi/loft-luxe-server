@@ -2,7 +2,9 @@ import { Request, Response, NextFunction } from 'express';
 import {
   addListingService,
   listAllListings,
+  listFavoriteListings,
   listingById,
+  removeListing,
 } from '../services/listings-service';
 
 export const addListing = async (
@@ -30,7 +32,11 @@ export const getAllListings = async (
   res: Response,
   next: NextFunction
 ) => {
-  const listings = await listAllListings();
+  console.log('Query: ', req.query);
+
+  const listings = await listAllListings(req.query);
+
+  console.log('listings controller: ', listings);
 
   return res.status(200).json({
     status: 'success',
@@ -44,12 +50,51 @@ export const getListingById = async (
   next: NextFunction
 ) => {
   const { listingId } = req.params;
+
   try {
     const listing = await listingById(listingId);
 
     return res.status(200).json({
       status: 'success',
       listing,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getFavoriteListings = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const user = res.locals.user;
+
+    const listings = await listFavoriteListings(user);
+
+    return res.status(200).json({
+      status: 'success',
+      listings,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteListing = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const { listingId } = req.params;
+
+    const listings = await removeListing(listingId);
+
+    return res.status(200).json({
+      status: 'success',
+      listings,
     });
   } catch (error) {
     next(error);
