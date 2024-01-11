@@ -1,5 +1,5 @@
+// require('dotenv').config();
 import { CookieOptions, NextFunction, Request, Response } from 'express';
-import config from 'config';
 import { compare } from 'bcrypt';
 
 import {
@@ -8,9 +8,8 @@ import {
   findUser,
   findUserById,
   signToken,
-} from '../services/user-service';
+} from '../services/users-service';
 import { signJwt, verifyJwt } from '../utils/jwt';
-import AppError from '../utils/appError';
 
 export const registerUserController = async (
   req: Request,
@@ -42,18 +41,20 @@ export const registerUserController = async (
 
 const accessTokenCookieOptions: CookieOptions = {
   expires: new Date(
-    Date.now() + config.get<number>('accessTokenExpiresIn') * 60 * 1000
+    Date.now() +
+      parseInt(`${process.env.ACCESS_TOKEN_EXPIRES_IN}`) * 3600 * 1000
   ),
-  maxAge: config.get<number>('accessTokenExpiresIn') * 60 * 1000,
+  maxAge: parseInt(`${process.env.ACCESS_TOKEN_EXPIRES_IN}`) * 3600 * 1000,
   httpOnly: true,
   sameSite: 'lax',
 };
 
 const refreshTokenCookieOptions: CookieOptions = {
   expires: new Date(
-    Date.now() + config.get<number>('refreshTokenExpiresIn') * 60 * 1000
+    Date.now() +
+      parseInt(`${process.env.REFRESH_TOKEN_EXPIRES_IN}`) * 3600 * 1000
   ),
-  maxAge: config.get<number>('refreshTokenExpiresIn') * 60 * 1000,
+  maxAge: parseInt(`${process.env.REFRESH_TOKEN_EXPIRES_IN}`) * 3600 * 1000,
   httpOnly: true,
   sameSite: 'lax',
 };
@@ -71,14 +72,15 @@ export const loginUserController = async (
   try {
     const user = await findUser(username);
 
-    if (!user || !(await compare(user.password, password))) {
-      next(new AppError('Invalid username or password', 403));
+    if (!user || !(await compare(password, user.password))) {
+      return res.status(401).json({
+        status: 'fail',
+        message: 'Invalid username or password',
+      });
     }
 
-    // Create the Access and refresh Tokens
     const { access_token, refresh_token } = await signToken(user);
 
-    // Send Access Token in Cookie
     res.cookie('access_token', access_token, accessTokenCookieOptions);
     res.cookie('refresh_token', refresh_token, refreshTokenCookieOptions);
     res.cookie('logged_in', true, {
@@ -112,18 +114,28 @@ export const refreshAccessTokenController = async (
 
     const message = 'Could not refresh access token';
     if (!decoded) {
-      return next(new AppError(message, 403));
+      return res.status(500).json({
+        status: 'fail',
+        message,
+      });
     }
 
     const user = await findUserById(decoded.sub);
 
     if (!user) {
-      return next(new AppError(message, 403));
+      return res.status(401).json({
+        status: 'fail',
+        message: 'User not found',
+      });
     }
 
-    const access_token = signJwt({ sub: user.id }, 'accessTokenPrivateKey', {
-      expiresIn: `${config.get<number>('accessTokenExpiresIn')}m`,
-    });
+    const access_token = signJwt(
+      { sub: user.id },
+      `${process.env.ACCESS_TOKEN_KEY}`,
+      {
+        expiresIn: `${process.env.ACCESS_TOKEN_EXPIRES_IN}h`,
+      }
+    );
 
     res.cookie('access_token', access_token, accessTokenCookieOptions);
     res.cookie('logged_in', true, {
@@ -148,14 +160,16 @@ const logout = (res: Response) => {
   });
 };
 
-export const logoutHandler = async (
+export const logoutUserController = async (
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
   try {
     logout(res);
-    return res.status(200).json({ status: 'success' });
+    return res
+      .status(200)
+      .json({ status: 'success', message: 'User logged out successfully!' });
   } catch (err: any) {
     next(err);
   }

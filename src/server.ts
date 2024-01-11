@@ -1,11 +1,9 @@
-import express, { Express } from 'express';
+import express, { Request, Response, Express, NextFunction } from 'express';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import config from 'config';
 
-import v1Routes from './routes/v1-routes';
-import errorMiddleware from './middlewares/error-middleware';
+import v1Route from './routes/v1-route';
 
 dotenv.config();
 
@@ -13,13 +11,22 @@ const app: Express = express();
 
 app.use(express.json());
 app.use(cookieParser());
-app.use(cors({ origin: config.get<string>('origin'), credentials: true }));
+app.use(cors({ origin: process.env.ORIGIN, credentials: true }));
 
-app.use('/v1', v1Routes);
+app.use('/v1', v1Route);
 
-app.use(errorMiddleware);
+app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+  err.status = err.status || 'error';
+  err.statusCode = err.statusCode || 500;
 
-const port = config.get<number>('port');
+  res.status(err.statusCode).json({
+    status: err.status,
+    message: err.message,
+  });
+});
+
+const port = process.env.PORT;
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
 });
