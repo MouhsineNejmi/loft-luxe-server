@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction, query } from 'express';
+import { Request, Response, NextFunction, query } from "express";
 
 import {
   addReservationService,
   getReservations,
   deleteReservation,
-} from '../services/reservations-service';
-import { error } from 'console';
+} from "../services/reservations-service";
+import { error } from "console";
 
 export const addReservation = async (
   req: Request,
@@ -22,7 +22,7 @@ export const addReservation = async (
     });
 
     return res.status(200).json({
-      status: 'success',
+      status: "success",
       reservation,
     });
   } catch (error) {
@@ -45,7 +45,7 @@ export const getReservationsByQuery = async (
     });
 
     return res.status(200).json({
-      status: 'success',
+      status: "success",
       reservations,
     });
   } catch (error) {
@@ -68,15 +68,15 @@ export const cancelReservation = async (
 
     if (!reservationId) {
       return res.status(400).json({
-        status: 'fail',
-        message: 'Invalid ID',
+        status: "fail",
+        message: "Invalid ID",
       });
     }
 
     const reservation = await deleteReservation(reservationId, currentUser);
 
     return res.status(200).json({
-      status: 'success',
+      status: "success",
       reservation,
     });
   } catch (error) {

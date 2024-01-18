@@ -1,4 +1,4 @@
-import { InferType, array, number, object, string } from 'yup';
+import { InferType, array, number, object, string } from "yup";
 
 export const addListingSchema = object({
   body: object({
@@ -9,7 +9,7 @@ export const addListingSchema = object({
     roomCount: number().min(1),
     bathroomCount: number().min(1),
     guestCount: number().min(1),
-    location: array(),
+    location: string(),
     price: number().min(1),
   }),
 });

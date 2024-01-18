@@ -1,4 +1,4 @@
-import { InferType, number, object, string } from 'yup';
+import { InferType, number, object, string } from "yup";
 
 export const addReservationSchema = object({
   body: object({

@@ -1,6 +1,6 @@
 // require('dotenv').config();
-import { CookieOptions, NextFunction, Request, Response } from 'express';
-import { compare } from 'bcrypt';
+import { CookieOptions, NextFunction, Request, Response } from "express";
+import { compare } from "bcrypt";
 
 import {
   createUserService,
@@ -8,8 +8,8 @@ import {
   findUser,
   findUserById,
   signToken,
-} from '../services/users-service';
-import { signJwt, verifyJwt } from '../utils/jwt';
+} from "../services/users-service";
+import { signJwt, verifyJwt } from "../utils/jwt";
 
 export const registerUserController = async (
   req: Request,
@@ -23,15 +23,15 @@ export const registerUserController = async (
 
     if (isUserExist) {
       return res.status(400).json({
-        status: 'fail',
-        message: 'User with this username or email already exist',
+        status: "fail",
+        message: "User with this username or email already exist",
       });
     }
 
     const user = await createUserService(data);
 
     return res.status(201).json({
-      status: 'success',
+      status: "success",
       user,
     });
   } catch (error) {
@@ -46,7 +46,7 @@ const accessTokenCookieOptions: CookieOptions = {
   ),
   maxAge: parseInt(`${process.env.ACCESS_TOKEN_EXPIRES_IN}`) * 3600 * 1000,
   httpOnly: true,
-  sameSite: 'lax',
+  sameSite: "lax",
 };
 
 const refreshTokenCookieOptions: CookieOptions = {
@@ -56,10 +56,10 @@ const refreshTokenCookieOptions: CookieOptions = {
   ),
   maxAge: parseInt(`${process.env.REFRESH_TOKEN_EXPIRES_IN}`) * 3600 * 1000,
   httpOnly: true,
-  sameSite: 'lax',
+  sameSite: "lax",
 };
 
-if (process.env.NODE_ENV === 'production')
+if (process.env.NODE_ENV === "production")
   accessTokenCookieOptions.secure = true;
 
 export const loginUserController = async (
@@ -74,22 +74,22 @@ export const loginUserController = async (
 
     if (!user || !(await compare(password, user.password))) {
       return res.status(401).json({
-        status: 'fail',
-        message: 'Invalid username or password',
+        status: "fail",
+        message: "Invalid username or password",
       });
     }
 
     const { access_token, refresh_token } = await signToken(user);
 
-    res.cookie('access_token', access_token, accessTokenCookieOptions);
-    res.cookie('refresh_token', refresh_token, refreshTokenCookieOptions);
-    res.cookie('logged_in', true, {
+    res.cookie("access_token", access_token, accessTokenCookieOptions);
+    res.cookie("refresh_token", refresh_token, refreshTokenCookieOptions);
+    res.cookie("logged_in", true, {
       ...accessTokenCookieOptions,
       httpOnly: false,
     });
 
     return res.status(200).json({
-      status: 'success',
+      status: "success",
       access_token,
     });
   } catch (err: any) {
@@ -109,13 +109,13 @@ export const refreshAccessTokenController = async (
     // Validate the Refresh token
     const decoded = verifyJwt<{ sub: string }>(
       refresh_token,
-      'refreshTokenPublicKey'
+      "refreshTokenPublicKey"
     );
 
-    const message = 'Could not refresh access token';
+    const message = "Could not refresh access token";
     if (!decoded) {
       return res.status(500).json({
-        status: 'fail',
+        status: "fail",
         message,
       });
     }
@@ -124,8 +124,8 @@ export const refreshAccessTokenController = async (
 
     if (!user) {
       return res.status(401).json({
-        status: 'fail',
-        message: 'User not found',
+        status: "fail",
+        message: "User not found",
       });
     }
 
@@ -137,14 +137,14 @@ export const refreshAccessTokenController = async (
       }
     );
 
-    res.cookie('access_token', access_token, accessTokenCookieOptions);
-    res.cookie('logged_in', true, {
+    res.cookie("access_token", access_token, accessTokenCookieOptions);
+    res.cookie("logged_in", true, {
       ...accessTokenCookieOptions,
       httpOnly: false,
     });
 
     return res.status(200).json({
-      status: 'success',
+      status: "success",
       access_token,
     });
   } catch (err: any) {
@@ -153,9 +153,9 @@ export const refreshAccessTokenController = async (
 };
 
 const logout = (res: Response) => {
-  res.cookie('access_token', '', { maxAge: 1 });
-  res.cookie('refresh_token', '', { maxAge: 1 });
-  res.cookie('logged_in', '', {
+  res.cookie("access_token", "", { maxAge: 1 });
+  res.cookie("refresh_token", "", { maxAge: 1 });
+  res.cookie("logged_in", "", {
     maxAge: 1,
   });
 };
@@ -169,7 +169,7 @@ export const logoutUserController = async (
     logout(res);
     return res
       .status(200)
-      .json({ status: 'success', message: 'User logged out successfully!' });
+      .json({ status: "success", message: "User logged out successfully!" });
   } catch (err: any) {
     next(err);
   }

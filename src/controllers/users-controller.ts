@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from "express";
 import {
   addListingToFavorites,
   removeListingFromFavorites,
-} from '../services/users-service';
+} from "../services/users-service";
 
 export const getCurrentUser = (
   req: Request,
@@ -12,7 +12,7 @@ export const getCurrentUser = (
   const user = res.locals.user;
 
   return res.status(200).json({
-    status: 'success',
+    status: "success",
     user,
   });
 };
@@ -26,17 +26,17 @@ export const addToFavorites = async (
   const currentUser = res.locals.user;
 
   try {
-    if (!listingId || typeof listingId !== 'string') {
+    if (!listingId || typeof listingId !== "string") {
       return res.status(400).json({
-        status: 'fail',
-        message: 'Invalid ID',
+        status: "fail",
+        message: "Invalid ID",
       });
     }
 
     const user = await addListingToFavorites(currentUser, listingId);
 
     return res.status(200).json({
-      status: 'success',
+      status: "success",
       user,
     });
   } catch (error) {
@@ -53,17 +53,17 @@ export const removeFromFavorites = async (
   const currentUser = res.locals.user;
 
   try {
-    if (!listingId || typeof listingId !== 'string') {
+    if (!listingId || typeof listingId !== "string") {
       return res.status(400).json({
-        status: 'fail',
-        message: 'Invalid ID',
+        status: "fail",
+        message: "Invalid ID",
       });
     }
 
     const user = await removeListingFromFavorites(currentUser, listingId);
 
     return res.status(200).json({
-      status: 'success',
+      status: "success",
       user,
     });
   } catch (error) {

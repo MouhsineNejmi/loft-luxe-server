@@ -1,8 +1,8 @@
-import { genSalt, hash } from 'bcrypt';
-import { User } from '@prisma/client';
+import { genSalt, hash } from "bcrypt";
+import { User } from "@prisma/client";
 
-import { signJwt } from '../utils/jwt';
-import prisma from '../lib/prisma';
+import { signJwt } from "../utils/jwt";
+import prisma from "../lib/prisma";
 
 interface CreateUserProps {
   username: string;
@@ -53,7 +53,7 @@ export const createUserService = async ({
       username,
       email,
       password: hashedPassword,
-      image: '',
+      image: "",
       emailVerified: false,
     },
   });

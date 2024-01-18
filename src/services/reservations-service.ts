@@ -1,5 +1,5 @@
-import { Reservation, User } from '@prisma/client';
-import prisma from '../lib/prisma';
+import { Reservation, User } from "@prisma/client";
+import prisma from "../lib/prisma";
 
 export const addReservationService = async (values: Reservation) => {
   const reservation = await prisma.listing.update({
@@ -44,7 +44,7 @@ export const getReservations = async ({ listingId, userId, authorId }: any) => {
       listing: true,
     },
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
   });
 

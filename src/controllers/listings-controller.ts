@@ -1,11 +1,11 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response, NextFunction } from "express";
 import {
   addListingService,
   listAllListings,
   listFavoriteListings,
   listingById,
   removeListing,
-} from '../services/listings-service';
+} from "../services/listings-service";
 
 export const addListing = async (
   req: Request,
@@ -19,7 +19,7 @@ export const addListing = async (
     const listing = await addListingService({ ...data, userId: user.id });
 
     return res.status(200).json({
-      status: 'success',
+      status: "success",
       listing,
     });
   } catch (error) {
@@ -32,14 +32,13 @@ export const getAllListings = async (
   res: Response,
   next: NextFunction
 ) => {
-  console.log('Query: ', req.query);
-
   const listings = await listAllListings(req.query);
 
-  console.log('listings controller: ', listings);
+  // console.log("query: ", req.query);
+  // console.log("listings: ", listings);
 
   return res.status(200).json({
-    status: 'success',
+    status: "success",
     listings,
   });
 };
@@ -55,7 +54,7 @@ export const getListingById = async (
     const listing = await listingById(listingId);
 
     return res.status(200).json({
-      status: 'success',
+      status: "success",
       listing,
     });
   } catch (error) {
@@ -74,7 +73,7 @@ export const getFavoriteListings = async (
     const listings = await listFavoriteListings(user);
 
     return res.status(200).json({
-      status: 'success',
+      status: "success",
       listings,
     });
   } catch (error) {
@@ -93,7 +92,7 @@ export const deleteListing = async (
     const listings = await removeListing(listingId);
 
     return res.status(200).json({
-      status: 'success',
+      status: "success",
       listings,
     });
   } catch (error) {

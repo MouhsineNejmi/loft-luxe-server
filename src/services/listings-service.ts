@@ -1,5 +1,7 @@
-import { Listing, User } from '@prisma/client';
-import prisma from '../lib/prisma';
+import { Listing, User } from "@prisma/client";
+
+import prisma from "../lib/prisma";
+import { IListingsParams } from "../utils/types";
 
 export const addListingService = async (data: Listing) => {
   const listing = await prisma.listing.create({
@@ -9,7 +11,7 @@ export const addListingService = async (data: Listing) => {
   return listing;
 };
 
-export const listAllListings = async (params: any) => {
+export const listAllListings = async (params: IListingsParams) => {
   let query: any = {};
   const {
     userId,
@@ -74,11 +76,9 @@ export const listAllListings = async (params: any) => {
   const listings = await prisma.listing.findMany({
     where: query,
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
   });
-
-  console.log('listings service: ', listings);
 
   return listings;
 };
